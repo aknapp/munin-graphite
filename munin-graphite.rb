@@ -1,4 +1,27 @@
 #!/usr/bin/env ruby
+#
+# munin-graphite.rb
+# 
+# A Munin-Node to Graphite bridge
+#
+# Author:: Adam Jacob (<adam@hjksolutions.com>)
+# Copyright:: Copyright (c) 2008 HJK Solutions, LLC
+# License:: GNU General Public License version 2 or later
+# 
+# This program and entire repository is free software; you can
+# redistribute it and/or modify it under the terms of the GNU 
+# General Public License as published by the Free Software 
+# Foundation; either version 2 of the License, or any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+# 
 
 require 'socket'
 
@@ -50,7 +73,7 @@ while true
 
   munin = Munin.new(ARGV[0])
   munin.get_response("nodes").each do |node|
-    metric_base << node.split(".")[2] + "." + node.split(".")[0]
+    metric_base << node.split(".").reverse.join(".")
     puts "Doing #{metric_base}"
     munin.get_response("list")[0].split(" ").each do |metric|
       puts "Grabbing #{metric}"
@@ -81,6 +104,6 @@ while true
     puts "Sending #{m}"
     carbon.send(m)
   end
-  sleep 5
+  sleep 60
 end
 
