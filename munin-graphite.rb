@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/ruby
 #
 # munin-graphite.rb
 # 
@@ -74,9 +74,7 @@ while true
   munin = Munin.new(ARGV[0])
   munin.get_response("nodes").each do |node|
     metric_base << node.split(".")[2] + "." + node.split(".")[0]
-    puts "Doing #{metric_base}"
     munin.get_response("list")[0].split(" ").each do |metric|
-      puts "Grabbing #{metric}"
       mname = "#{metric_base}"
       has_category = false
       base = false
@@ -101,7 +99,6 @@ while true
 
   carbon = Carbon.new(ARGV[1])
   all_metrics.each do |m|
-    puts "Sending #{m}"
     carbon.send(m)
   end
   sleep 5

@@ -1,0 +1,57 @@
+#! /bin/sh
+
+### BEGIN INIT INFO
+# Provides:          munin-graphite
+# Required-Start:    $all
+# Required-Stop:     $all
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: daemon that pushes munin metrics to graphite
+### END INIT INFO
+
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+NAME="munin-graphite"
+DESC="munin-graphite"
+
+MG_HOME="/srv/munin-graphite"
+PIDFILE="$MG_HOME/$NAME.pid"
+
+HOSTNAME=`hostname`
+GRAPHITE_HOST="somehost.domain" # SET THIS!
+
+DAEMON_OPTS="$HOSTNAME $GRAPHITE_HOST"
+
+set -e
+
+. /lib/lsb/init-functions
+
+case "$1" in
+  start)
+    echo -n "Starting $DESC: "
+    start-stop-daemon --start -m --pidfile $PIDFILE --chdir $MG_HOME --background \
+      --user munin --chuid munin --exec /usr/bin/ruby -- "$MG_HOME/munin-graphite.rb" $DAEMON_OPTS
+    echo "$NAME."
+  ;;
+  stop)
+    echo -n "Stopping $DESC: "
+    start-stop-daemon --stop --pidfile $PIDFILE --oknodo --user munin
+    echo "$NAME."
+  ;;
+  restart|force-reload)
+    echo -n "Restarting $DESC: "
+    start-stop-daemon --stop --pidfile $PIDFILE --oknodo --user munin
+    sleep 5
+    start-stop-daemon --start -m --pidfile $PIDFILE --chdir $MG_HOME --background \
+      --user munin --chuid munin --exec /usr/bin/ruby -- "$MG_HOME/munin-graphite.rb" $DAEMON_OPTS
+    echo "$NAME."
+  ;;
+  status)
+    status_of_proc -p $PIDFILE "$DAEMON" $NAME && exit 0 || exit $?
+  ;;
+  *)
+    echo "Usage: $NAME {start|stop|restart|force-reload|status}" >&2
+    exit 1
+  ;;
+esac
+
+exit 0
