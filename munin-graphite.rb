@@ -101,6 +101,6 @@ while true
   all_metrics.each do |m|
     carbon.send(m)
   end
-  sleep 5
+  sleep 15
 end
 
