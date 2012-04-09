@@ -73,7 +73,7 @@ while true
 
   munin = Munin.new(ARGV[0])
   munin.get_response("nodes").each do |node|
-    metric_base << node.split(".").reverse.join(".")
+    metric_base << node.split(".")[2] + "." + node.split(".")[0]
     puts "Doing #{metric_base}"
     munin.get_response("list")[0].split(" ").each do |metric|
       puts "Grabbing #{metric}"
@@ -104,6 +104,6 @@ while true
     puts "Sending #{m}"
     carbon.send(m)
   end
-  sleep 60
+  sleep 5
 end
 
