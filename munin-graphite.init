@@ -16,10 +16,9 @@ DESC="munin-graphite"
 MG_HOME="/srv/munin-graphite"
 PIDFILE="$MG_HOME/$NAME.pid"
 
-HOSTNAME=`hostname`
 GRAPHITE_HOST="somehost.domain" # SET THIS!
 
-DAEMON_OPTS="$HOSTNAME $GRAPHITE_HOST"
+DAEMON_OPTS="localhost $GRAPHITE_HOST"
 
 set -e
 
